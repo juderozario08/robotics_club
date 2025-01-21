@@ -1,12 +1,13 @@
 import express from "express"
 import { User } from "../schemas/user.schema";
 import { STATUS_CODES, STATUS_MESSAGES } from "../globals";
+import authenticateSession from "../middleware/auth";
+import logError from "../utils/errorLog";
 
-// TODO: Do some error logging to keep track of all errors that can occur and figure out
-// how to keep proper track of errors in a parsable manner as well
 const userRouter = express.Router();
 
-userRouter.get("/:userId", async (_, res) => {
+/* GET ALL USERS ROUTER */
+userRouter.get("/:userId", authenticateSession, async (_, res) => {
     try {
         const users = await User.find({});
         res.status(STATUS_CODES.success).json({
@@ -15,21 +16,93 @@ userRouter.get("/:userId", async (_, res) => {
         })
     }
     catch (err) {
-        res.status(STATUS_CODES.server_error).json({ message: STATUS_MESSAGES.server_error })
+        logError(res, err)
     }
 });
 
-userRouter.get("/:id/:userId", async (req, res) => {
+/* GET SPECIFIC USER ROUTER */
+userRouter.get("/:id/:userId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.find({ id });
-        res.status(200).json({
+        if (!id) {
+            res.status(STATUS_CODES.not_found)
+                .json({
+                    message: STATUS_MESSAGES.not_found
+                });
+            return;
+        }
+
+        const user = await User.findById(id);
+        if (!user) {
+            res.status(STATUS_CODES.not_found)
+                .json({
+                    message: STATUS_MESSAGES.invalid_id
+                });
+            return;
+        }
+
+        res.status(STATUS_CODES.success).json({
             user,
-            message: "ok"
+            message: STATUS_MESSAGES.success
         })
     } catch (err) {
-        res.status(STATUS_CODES.server_error).json({ message: STATUS_MESSAGES.server_error })
+        logError(res, err)
     }
 });
+
+/* PUT ROUTER */
+userRouter.put("/:id/:userId", authenticateSession, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            res.status(STATUS_CODES.not_found)
+                .json({
+                    message: STATUS_MESSAGES.not_found
+                });
+            return;
+        }
+
+        const user = await User.findByIdAndUpdate(id, req.body);
+        if (!user) {
+            res.status(STATUS_CODES.not_found)
+                .json({
+                    message: STATUS_MESSAGES.invalid_id
+                });
+            return;
+        }
+
+        res.status(STATUS_CODES.success)
+            .json({ message: STATUS_MESSAGES.success, user });
+    } catch (err) {
+        logError(res, err)
+    }
+})
+
+/* DELETE ROUTER */
+userRouter.delete("/:id/:userId", authenticateSession, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            res.status(STATUS_CODES.not_found)
+                .json({ message: STATUS_MESSAGES.not_found });
+            return;
+        }
+
+        const user = await User.findByIdAndDelete(id);
+        if (!user) {
+            res.status(STATUS_CODES.not_found)
+                .json({ message: STATUS_MESSAGES.invalid_id });
+            return;
+        }
+
+        res.status(STATUS_CODES.success)
+            .json({
+                message: STATUS_MESSAGES.success,
+                name: user.username
+            })
+    } catch (err) {
+        logError(res, err)
+    }
+})
 
 export { userRouter };

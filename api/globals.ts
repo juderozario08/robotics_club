@@ -1,13 +1,20 @@
 export const STATUS_MESSAGES = {
     server_error: "Internal Server Error",
     unauthorized: "Unauthorized",
-    forbidden: "Forbidden",
+    not_found: "Not Found",
+    forbidden: "You do not have permission to do this!",
+    invalid_user_id: "User not logged in!",
+    invalid_id: "User not found!",
     success: "ok",
+    invalid_login: "Invalid login attempt!",
+    invalid_signup: "Please fill out all the all the information properly!"
 }
 
 export const STATUS_CODES = {
     server_error: 500,
     unauthorized: 401,
+    not_found: 404,
+    not_acceptable: 406,
     forbidden: 403,
     success: 200
 }

@@ -21,6 +21,6 @@ export const STYLES = StyleSheet.create({
     },
 })
 
-export const hideHeader: NativeStackNavigationOptions = {
+export const HIDE_HEADER: NativeStackNavigationOptions = {
     headerShown: false
 }
