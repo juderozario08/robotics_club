@@ -1,6 +1,6 @@
 import express from "express"
 import { User } from "../schemas/user.schema";
-import { STATUS_CODES, STATUS_MESSAGES } from "../globals";
+import { STATUS_CODES, STATUS_MESSAGES } from "../status";
 import authenticateSession from "../middleware/auth";
 import logError from "../utils/errorLog";
 

@@ -1,4 +1,4 @@
-import { STATUS_CODES, STATUS_MESSAGES } from "../globals";
+import { STATUS_CODES, STATUS_MESSAGES } from "../status";
 import { Session } from "../schemas/session.schema";
 import logError from "../utils/errorLog";
 
@@ -15,14 +15,7 @@ export default async function authenticateSession(req: any, res: any, next: any)
         if (!sessionExists) {
             return res.status(STATUS_CODES.unauthorized)
                 .json({
-                    message: STATUS_MESSAGES.invalid_user_id
-                })
-        }
-        // TODO: FIGURE OUT THE ROLES LATER. THIS IS JUST FOR CURRENT TESTING
-        if (sessionExists.role !== 'admin') {
-            return res.status(STATUS_CODES.forbidden)
-                .json({
-                    message: STATUS_MESSAGES.forbidden
+                    message: STATUS_MESSAGES.not_authenticated
                 })
         }
         next();
@@ -30,3 +23,4 @@ export default async function authenticateSession(req: any, res: any, next: any)
         logError(res, err)
     }
 }
+
