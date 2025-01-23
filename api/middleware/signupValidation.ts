@@ -1,7 +1,9 @@
 import { STATUS_CODES, STATUS_MESSAGES } from "../status";
+import { Roles } from "../../model/model"
 import logError from "../utils/errorLog";
+import type { Request, Response } from "express";
 
-export default function signupValidation(req: any, res: any, next: any) {
+export default function signupValidation(req: Request, res: Response, next: () => void) {
     try {
         const { username, password, email, role, features, firstname, lastname } = req.body;
         if (!validateUsername(username)
@@ -21,39 +23,51 @@ export default function signupValidation(req: any, res: any, next: any) {
     }
 }
 
-function validateUsername(username: String): boolean {
-    if (!username) {
-        return false;
+function validateUsername(username: string): boolean { return username.length >= 6 }
+
+function validatePassword(password: string): boolean {
+    let seenUppercase = false;
+    let seenLowercase = false;
+    let seenNumbers = false;
+    let seenSymbols = false;
+    for (let i = 0; i < password.length; i++) {
+        if (password[i].match(/[A-Z]/)) {
+            seenUppercase = true;
+        } else if (password[i].match(/[a-z]/)) {
+            seenLowercase = true;
+        } else if (password[i].match(/[0-9]/)) {
+            seenNumbers = true;
+        } else if (password[i].match(/[?$!@.%&]/)) {
+            seenSymbols = true;
+        }
     }
-    return true;
+    return seenUppercase && seenLowercase && seenNumbers && seenSymbols;
 }
-function validatePassword(password: String): boolean {
-    if (!password) {
-        return false;
+
+function validateEmail(email: string): boolean {
+    let seenAt = false;
+    let seenWordsAfterAt = false;
+    let seenDotAfterAt = false;
+    let seenLettersAfterDot = false;
+    for (let i = 0; i < email.length; i++) {
+        if (email[i] === '@') {
+            seenAt = true;
+        } else if (seenAt && !!email[i].match(/[A-Za-z]/)) {
+            seenWordsAfterAt = true;
+        } else if (seenAt && seenWordsAfterAt && email[i] === '.') {
+            seenDotAfterAt = true;
+        } else if (seenDotAfterAt && !!email[i - 1].match(/[A-Za-z]/)) {
+            seenLettersAfterDot = true;
+        }
+        if (seenDotAfterAt && email[i] === '.') {
+            return false;
+        }
     }
-    return true;
+    return seenAt && seenWordsAfterAt && seenDotAfterAt && seenLettersAfterDot;
 }
-function validateEmail(email: String): boolean {
-    if (!email) {
-        return false;
-    }
-    return true;
-}
-function validateRole(role: String): boolean {
-    if (!role) {
-        return false;
-    }
-    return true;
-}
-function validateFeatures(features: String): boolean {
-    if (!features) {
-        return false;
-    }
-    return true;
-}
-function validateName(firstname: String, lastname: String): boolean {
-    if (!firstname || !lastname) {
-        return false;
-    }
-    return true;
-}
+
+function validateRole(role: number): boolean { return role >= 0 && role < Roles.__LENGTH }
+
+function validateFeatures(features: string): boolean { return !!features.match(/^[0-1]+$/); }
+
+function validateName(firstname: string, lastname: string): boolean { return firstname.length > 1 && lastname.length > 1 }
