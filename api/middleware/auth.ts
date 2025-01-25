@@ -1,9 +1,8 @@
 import { STATUS_CODES, STATUS_MESSAGES } from "../status";
 import { Session } from "../schemas/session.schema";
 import logError from "../utils/errorLog";
-import type { Request, Response } from "express";
 
-export default async function authenticateSession(req: Request, res: Response, next: () => void) {
+export default async function authenticateSession(req: any, res: any, next: any) {
     try {
         const { userId } = req.params;
         if (!userId) {
