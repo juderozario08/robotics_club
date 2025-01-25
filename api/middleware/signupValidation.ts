@@ -44,23 +44,30 @@ function validatePassword(password: string): boolean {
     return seenUppercase && seenLowercase && seenNumbers && seenSymbols;
 }
 
-function validateEmail(email: string): boolean {
+function validateEmail(email: String): boolean {
     let seenAt = false;
     let seenWordsAfterAt = false;
     let seenDotAfterAt = false;
     let seenLettersAfterDot = false;
     for (let i = 0; i < email.length; i++) {
-        if (email[i] === '@') {
-            seenAt = true;
-        } else if (seenAt && !!email[i].match(/[A-Za-z]/)) {
-            seenWordsAfterAt = true;
-        } else if (seenAt && seenWordsAfterAt && email[i] === '.') {
-            seenDotAfterAt = true;
-        } else if (seenDotAfterAt && !!email[i - 1].match(/[A-Za-z]/)) {
-            seenLettersAfterDot = true;
-        }
         if (seenDotAfterAt && email[i] === '.') {
             return false;
+        }
+        if (!seenAt && email[i] === '@') {
+            seenAt = true;
+            continue
+        }
+        if (!seenWordsAfterAt && seenAt && !!email[i].match(/[A-Za-z]/)) {
+            seenWordsAfterAt = true;
+            continue
+        }
+        if (!seenDotAfterAt && seenWordsAfterAt && email[i] === '.') {
+            seenDotAfterAt = true;
+            continue
+        }
+        if (!seenLettersAfterDot && seenDotAfterAt && !!email[i - 1].match(/[A-Za-z]/)) {
+            seenLettersAfterDot = true;
+            continue;
         }
     }
     return seenAt && seenWordsAfterAt && seenDotAfterAt && seenLettersAfterDot;
