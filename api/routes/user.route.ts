@@ -5,6 +5,7 @@ import authenticateSession from "../middleware/auth";
 import logError from "../utils/errorLog";
 
 const userRouter = express.Router();
+
 /* GET ALL USERS ROUTER */
 userRouter.get("/:userId", authenticateSession, async (_, res) => {
     try {

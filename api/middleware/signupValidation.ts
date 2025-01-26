@@ -1,9 +1,9 @@
 import { STATUS_CODES, STATUS_MESSAGES } from "../status";
 import { Roles } from "../../model/model"
 import logError from "../utils/errorLog";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
-export default function signupValidation(req: Request, res: Response, next: () => void) {
+export default function signupValidation(req: Request, res: Response, next: NextFunction) {
     try {
         const { username, password, email, role, features, firstname, lastname } = req.body;
         if (!validateUsername(username)
