@@ -6,9 +6,9 @@ import { User } from '../schemas/user.schema';
 import { Session } from '../schemas/session.schema';
 import signupValidation from '../middleware/signupValidation';
 
-const userAuthentication = express.Router()
+const router = express.Router()
 
-userAuthentication.post("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
     try {
         const { username, password, deviceId } = req.body;
         if (!username || !password) {
@@ -66,7 +66,7 @@ userAuthentication.post("/login", async (req, res) => {
     }
 })
 
-userAuthentication.post("/signup", signupValidation, async (req, res) => {
+router.post("/signup", signupValidation, async (req, res) => {
     try {
         const { firstname, lastname, username, email, password, role, features } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -89,7 +89,7 @@ userAuthentication.post("/signup", signupValidation, async (req, res) => {
     }
 })
 
-userAuthentication.post("/logout", async (req, res) => {
+router.post("/logout", async (req, res) => {
     try {
         const { userId, deviceId } = req.body;
         if (!userId || !deviceId) {
@@ -115,4 +115,4 @@ userAuthentication.post("/logout", async (req, res) => {
     }
 })
 
-export { userAuthentication }
+export { router }

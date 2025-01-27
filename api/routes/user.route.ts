@@ -4,10 +4,10 @@ import { STATUS_CODES, STATUS_MESSAGES } from "../status";
 import authenticateSession from "../middleware/auth";
 import logError from "../utils/errorLog";
 
-const userRouter = express.Router();
+const router = express.Router();
 
 /* GET ALL USERS ROUTER */
-userRouter.get("/:userId/:deviceId", authenticateSession, async (_, res) => {
+router.get("/:userId/:deviceId", authenticateSession, async (_, res) => {
     try {
         const users = await User.find({});
         console.log("Fetching all users succeeded!\n")
@@ -22,7 +22,7 @@ userRouter.get("/:userId/:deviceId", authenticateSession, async (_, res) => {
 });
 
 /* GET SPECIFIC USER ROUTER */
-userRouter.get("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
+router.get("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) {
@@ -55,7 +55,7 @@ userRouter.get("/:id/:userId/:deviceId", authenticateSession, async (req, res) =
 });
 
 /* PUT ROUTER */
-userRouter.put("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
+router.put("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) {
@@ -86,7 +86,7 @@ userRouter.put("/:id/:userId/:deviceId", authenticateSession, async (req, res) =
 })
 
 /* DELETE ROUTER */
-userRouter.delete("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
+router.delete("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) {
@@ -115,4 +115,4 @@ userRouter.delete("/:id/:userId/:deviceId", authenticateSession, async (req, res
     }
 })
 
-export { userRouter };
+export { router };
