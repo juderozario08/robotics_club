@@ -24,7 +24,6 @@ userAuthentication.post("/login", async (req, res) => {
             return;
         }
 
-        // TODO: UNHASH THE PASSWORD TO BE CHECKED
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
             res.status(STATUS_CODES.unauthorized)
@@ -83,13 +82,13 @@ userAuthentication.post("/signup", signupValidation, async (req, res) => {
 
 userAuthentication.post("/logout", async (req, res) => {
     try {
-        const { userId } = req.body;
+        const { userId, deviceId } = req.body;
         if (!userId) {
             res.status(STATUS_CODES.not_found)
                 .json({ message: STATUS_MESSAGES.not_found })
             return
         }
-        const session = await Session.findOneAndDelete({ userId })
+        const session = await Session.findOneAndDelete({ userId, deviceId })
         if (!session) {
             res.status(STATUS_CODES.unauthorized)
                 .json({ message: STATUS_MESSAGES.not_authenticated })
