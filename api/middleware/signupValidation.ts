@@ -13,6 +13,7 @@ export default function signupValidation(req: Request, res: Response, next: Next
             || !validateFeatures(features)
             || !validateName(firstname, lastname)
         ) {
+            console.log("Signup Failed: Invalid signup data", req.body, "\n")
             res.status(STATUS_CODES.not_acceptable)
                 .json({ message: STATUS_MESSAGES.invalid_signup })
             return
