@@ -26,4 +26,3 @@ export default async function authenticateSession(req: Request, res: Response, n
         logError(res, err)
     }
 }
-
