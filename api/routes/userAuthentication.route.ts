@@ -12,34 +12,46 @@ router.post("/login", async (req, res) => {
     try {
         const { username, password, deviceId } = req.body;
         if (!username || !password) {
-            console.log("Login Error: Username or Password not provided\n")
-            res.status(STATUS_CODES.not_acceptable)
-                .json({ message: STATUS_MESSAGES.invalid_login })
+            logError(
+                res,
+                STATUS_MESSAGES.invalid_login,
+                STATUS_CODES.not_acceptable,
+                "Login Error: Username or Password not provided"
+            );
             return
         }
 
         const user = await User.findOne({ username })
         if (!user) {
-            console.log("Login Error: Username not found in the database\n")
-            res.status(STATUS_CODES.unauthorized)
-                .json({ message: STATUS_MESSAGES.invalid_login });
+            logError(
+                res,
+                STATUS_MESSAGES.invalid_login,
+                STATUS_CODES.unauthorized,
+                "Login Error: Username not found in the database"
+            )
             return;
         }
 
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-            console.log("Login Error: Password does not match with the provided username\n")
-            res.status(STATUS_CODES.unauthorized)
-                .json({ message: STATUS_MESSAGES.invalid_login });
+            logError(
+                res,
+                STATUS_MESSAGES.invalid_login,
+                STATUS_CODES.unauthorized,
+                "Login Error: Password does not match with the provided username"
+            )
             return;
         }
         const session = await Session.findOne({ userId: user._id })
         if (session) {
             // TODO: Implement a functionality to log them out of whatever other device
             // they were logged in and then create this new session
-            console.log("Login Error: User already logged in on another device\n")
-            res.status(STATUS_CODES.unauthorized)
-                .json({ message: STATUS_MESSAGES.already_logged_in })
+            logError(
+                res,
+                STATUS_MESSAGES.already_logged_in,
+                STATUS_CODES.unauthorized,
+                "Login Error: User already logged in on another device"
+            )
             return
         }
 
@@ -62,7 +74,7 @@ router.post("/login", async (req, res) => {
         res.status(STATUS_CODES.success)
             .json(response)
     } catch (err) {
-        logError(res, err)
+        logError(res, STATUS_MESSAGES.server_error, STATUS_CODES.server_error, err)
     }
 })
 
@@ -85,7 +97,7 @@ router.post("/signup", signupValidation, async (req, res) => {
             .json({ message: STATUS_MESSAGES.success })
 
     } catch (err) {
-        logError(res, err)
+        logError(res, STATUS_MESSAGES.server_error, STATUS_CODES.server_error, err)
     }
 })
 
@@ -111,7 +123,7 @@ router.post("/logout", async (req, res) => {
                 message: STATUS_MESSAGES.success
             })
     } catch (err) {
-        logError(res, err)
+        logError(res, STATUS_MESSAGES.server_error, STATUS_CODES.server_error, err)
     }
 })
 
