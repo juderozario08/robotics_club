@@ -1,5 +1,5 @@
 import { STATUS_CODES, STATUS_MESSAGES } from "../status";
-import logError from "../utils/errorLog";
+import { logError } from "../utils/logging";
 import type { NextFunction, Request, Response } from "express";
 import { validateEmail, validateFeatures, validateName, validatePassword, validateRole, validateUsername } from "../../helpers/validationFunctions";
 
@@ -13,14 +13,22 @@ export default function signupValidation(req: Request, res: Response, next: Next
             || !validateFeatures(features)
             || !validateName(firstname, lastname)
         ) {
-            console.log("Signup Failed: Invalid signup data", req.body, "\n")
-            res.status(STATUS_CODES.not_acceptable)
-                .json({ message: STATUS_MESSAGES.invalid_signup })
+            logError(
+                res,
+                STATUS_MESSAGES.invalid_signup,
+                STATUS_CODES.not_acceptable,
+                `Signup Failed: Invalid signup data. ${req.body}`
+            )
             return
         }
         next();
     } catch (err) {
-        logError(res, err)
+        logError(
+            res,
+            STATUS_MESSAGES.server_error,
+            STATUS_CODES.server_error,
+            err
+        )
     }
 }
 

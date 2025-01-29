@@ -2,7 +2,7 @@ import express from "express"
 import { User } from "../schemas/user.schema";
 import { STATUS_CODES, STATUS_MESSAGES } from "../status";
 import authenticateSession from "../middleware/auth";
-import logError from "../utils/errorLog";
+import { logError, logSuccess } from "../utils/logging";
 
 const router = express.Router();
 
@@ -10,14 +10,20 @@ const router = express.Router();
 router.get("/:userId/:deviceId", authenticateSession, async (_, res) => {
     try {
         const users = await User.find({});
-        console.log("Fetching all users succeeded!\n")
-        res.status(STATUS_CODES.success).json({
-            users,
-            message: STATUS_MESSAGES.success
-        })
+        logSuccess(
+            res,
+            { users, message: STATUS_MESSAGES.success },
+            STATUS_CODES.success,
+            "Fetching all users succeeded!"
+        );
     }
     catch (err) {
-        logError(res, err)
+        logError(
+            res,
+            STATUS_MESSAGES.server_error,
+            STATUS_CODES.server_error,
+            err
+        );
     }
 });
 
@@ -26,31 +32,39 @@ router.get("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) {
-            console.log("Fetching User Failed: Id not provided.", { id }, "\n");
-            res.status(STATUS_CODES.not_found)
-                .json({
-                    message: STATUS_MESSAGES.not_found
-                });
+            logError(
+                res,
+                STATUS_MESSAGES.not_found,
+                STATUS_CODES.not_found,
+                `Fetching User Failed: Id not provided. ${{ id }}`
+            )
             return;
         }
 
         const user = await User.findById(id);
         if (!user) {
-            console.log("Fetching User Failed: Id not found.", { id }, "\n");
-            res.status(STATUS_CODES.not_found)
-                .json({
-                    message: STATUS_MESSAGES.invalid_id
-                });
+            logError(
+                res,
+                STATUS_MESSAGES.invalid_id,
+                STATUS_CODES.not_found,
+                `Fetching User Failed: Id not found. ${{ id }}`
+            )
             return;
         }
 
-        console.log("Fetching user succeeded!", { id }, "\n")
-        res.status(STATUS_CODES.success).json({
-            user,
-            message: STATUS_MESSAGES.success
-        })
+        logSuccess(
+            res,
+            { user, message: STATUS_MESSAGES.success },
+            STATUS_CODES.success,
+            `Fetching user succeeded!, ${{ id }}`
+        );
     } catch (err) {
-        logError(res, err)
+        logError(
+            res,
+            STATUS_MESSAGES.server_error,
+            STATUS_CODES.server_error,
+            err
+        )
     }
 });
 
@@ -59,29 +73,39 @@ router.put("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) {
-            console.log("Updating User Failed: Id not provided.", { id }, "\n");
-            res.status(STATUS_CODES.not_found)
-                .json({
-                    message: STATUS_MESSAGES.not_found
-                });
+            logError(
+                res,
+                STATUS_MESSAGES.not_found,
+                STATUS_CODES.not_found,
+                `Updating User Failed: Id not provided. ${{ id }}`
+            );
             return;
         }
 
         const user = await User.findByIdAndUpdate(id, req.body);
         if (!user) {
-            console.log("Updating User Failed: Id not found.", { id }, "\n");
-            res.status(STATUS_CODES.not_found)
-                .json({
-                    message: STATUS_MESSAGES.invalid_id
-                });
+            logError(
+                res,
+                STATUS_MESSAGES.invalid_id,
+                STATUS_CODES.not_found,
+                `Updating User Failed: Id not found.${{ id }}`
+            );
             return;
         }
 
-        console.log("Updating User Succeeded!", { id }, "\n");
-        res.status(STATUS_CODES.success)
-            .json({ message: STATUS_MESSAGES.success, user });
+        logSuccess(
+            res,
+            { user, message: STATUS_MESSAGES.success },
+            STATUS_CODES.success,
+            `Updating User Succeeded!, ${{ id }}`
+        );
     } catch (err) {
-        logError(res, err)
+        logError(
+            res,
+            STATUS_MESSAGES.server_error,
+            STATUS_CODES.server_error,
+            err
+        );
     }
 })
 
@@ -90,28 +114,33 @@ router.delete("/:id/:userId/:deviceId", authenticateSession, async (req, res) =>
     try {
         const { id } = req.params;
         if (!id) {
-            console.log("Deleting User Failed: Id not provided.", { id }, "\n");
-            res.status(STATUS_CODES.not_found)
-                .json({ message: STATUS_MESSAGES.not_found });
+            logError(
+                res,
+                STATUS_MESSAGES.not_found,
+                STATUS_CODES.not_found,
+                `Deleting User Failed: Id not provided.${{ id }}`
+            );
             return;
         }
 
         const user = await User.findByIdAndDelete(id);
         if (!user) {
-            console.log("Deleting User Failed: Id not found.", { id }, "\n");
-            res.status(STATUS_CODES.not_found)
-                .json({ message: STATUS_MESSAGES.invalid_id });
+            logError(
+                res,
+                STATUS_MESSAGES.invalid_id,
+                STATUS_CODES.not_found,
+                `Deleting User Failed: Id not found.${{ id }}`
+            );
             return;
         }
-
-        console.log("Deleting User Succeeded!", { id }, "\n");
-        res.status(STATUS_CODES.success)
-            .json({
-                message: STATUS_MESSAGES.success,
-                name: user.username
-            })
+        logSuccess(
+            res,
+            { message: STATUS_MESSAGES.success, name: user.username },
+            STATUS_CODES.success,
+            `Deleting User Succeeded! ${{ id }}`
+        )
     } catch (err) {
-        logError(res, err)
+        logError(res, STATUS_MESSAGES.server_error, STATUS_CODES.server_error, err);
     }
 })
 

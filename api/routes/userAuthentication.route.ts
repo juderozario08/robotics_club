@@ -1,5 +1,5 @@
 import express from 'express'
-import logError from '../utils/errorLog'
+import { logError, logSuccess } from '../utils/logging'
 import bcrypt from "bcrypt"
 import { STATUS_CODES, STATUS_MESSAGES } from '../status';
 import { User } from '../schemas/user.schema';
@@ -61,7 +61,6 @@ router.post("/login", async (req, res) => {
             username
         }
         await Session.create(sessionData)
-        console.log("Created session: ", sessionData, "\n")
         const response = {
             message: STATUS_MESSAGES.success,
             id: user._id,
@@ -70,9 +69,12 @@ router.post("/login", async (req, res) => {
             lastname: user.lastname,
             email: user.email,
         }
-        console.log("Login Success!", response, "\n")
-        res.status(STATUS_CODES.success)
-            .json(response)
+        logSuccess(
+            res,
+            response,
+            STATUS_CODES.success,
+            `Created session: ${sessionData}\nLogin Success! ${response}`
+        );
     } catch (err) {
         logError(res, STATUS_MESSAGES.server_error, STATUS_CODES.server_error, err)
     }
@@ -92,10 +94,12 @@ router.post("/signup", signupValidation, async (req, res) => {
             features
         }
         await User.create(userData)
-        console.log("User signup success!", userData, "\n")
-        res.status(STATUS_CODES.success)
-            .json({ message: STATUS_MESSAGES.success })
-
+        logSuccess(
+            res,
+            { message: STATUS_MESSAGES.success },
+            STATUS_CODES.success,
+            `User signup success! ${userData}`
+        )
     } catch (err) {
         logError(res, STATUS_MESSAGES.server_error, STATUS_CODES.server_error, err)
     }
@@ -105,25 +109,37 @@ router.post("/logout", async (req, res) => {
     try {
         const { userId, deviceId } = req.body;
         if (!userId || !deviceId) {
-            console.log("Logout failed: userId not given!\n")
-            res.status(STATUS_CODES.not_found)
-                .json({ message: STATUS_MESSAGES.not_found })
+            logError(
+                res,
+                STATUS_MESSAGES.not_found,
+                STATUS_CODES.not_found,
+                "Logout failed: userId not given!"
+            );
             return
         }
         const session = await Session.findOneAndDelete({ userId, deviceId })
         if (!session) {
-            console.log("Logout failed: Session not found!", req.body, "\n")
-            res.status(STATUS_CODES.unauthorized)
-                .json({ message: STATUS_MESSAGES.not_authenticated })
+            logError(
+                res,
+                STATUS_MESSAGES.not_authenticated,
+                STATUS_CODES.unauthorized,
+                `Logout failed: Session not found! ${req.body}`
+            );
             return
         }
-        console.log("Logout Success!", req.body, "\n")
-        res.status(STATUS_CODES.success)
-            .json({
-                message: STATUS_MESSAGES.success
-            })
+        logSuccess(
+            res,
+            { message: STATUS_MESSAGES.success },
+            STATUS_CODES.success,
+            `Logout Success! ${req.body}`
+        )
     } catch (err) {
-        logError(res, STATUS_MESSAGES.server_error, STATUS_CODES.server_error, err)
+        logError(
+            res,
+            STATUS_MESSAGES.server_error,
+            STATUS_CODES.server_error,
+            err
+        )
     }
 })
 
