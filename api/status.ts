@@ -10,7 +10,9 @@ export const STATUS_MESSAGES = {
     invalid_login: "Invalid login attempt!",
     invalid_signup: "Please fill out all the all the information properly!",
     invalid_data: "Invalid Data!",
-    not_authenticated: "User not authenticated!"
+    not_authenticated: "User not authenticated!",
+    existing_username: "Username already exists!",
+    existing_email: "Email already exists!"
 }
 
 export const STATUS_CODES = {

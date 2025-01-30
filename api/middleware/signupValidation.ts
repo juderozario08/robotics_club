@@ -7,6 +7,7 @@ import { User } from "../schemas/user.schema";
 export default async function signupValidation(req: Request, res: Response, next: NextFunction) {
     try {
         const { username, password, email, role, features, firstname, lastname } = req.body;
+        // Validating all data fields
         if (!validateUsername(username)
             || !validatePassword(password)
             || !validateEmail(email)
@@ -22,23 +23,26 @@ export default async function signupValidation(req: Request, res: Response, next
             )
             return
         }
+
+        // Checking for existing username
         const usernameUser = await User.find({ username })
         if (usernameUser) {
             logError(
                 res,
-                STATUS_MESSAGES.invalid_data,
-                STATUS_CODES.forbidden,
+                STATUS_MESSAGES.existing_username,
+                STATUS_CODES.not_acceptable,
                 `A user with the username: ${username} already exists!`
             )
             return
         }
-        const emailUser = await User.find({ email })
 
+        // Checking for existing email
+        const emailUser = await User.find({ email })
         if (emailUser) {
             logError(
                 res,
-                STATUS_MESSAGES.invalid_data,
-                STATUS_CODES.forbidden,
+                STATUS_MESSAGES.existing_email,
+                STATUS_CODES.not_acceptable,
                 `A user with the email: ${email} already exists!`
             )
             return
