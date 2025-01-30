@@ -12,3 +12,22 @@ export enum Roles {
 // TODO: Add all the features as we go along
 export const Features = {
 }
+
+export type LoginType = {
+    id: String,
+    username: String,
+    firstname: String,
+    lastname: String,
+    email: String,
+    message: String;
+}
+
+export type Userinfo = {
+    username: String,
+    firstname: String,
+    lastname: String,
+    email: String,
+    password: String,
+    role: Number,
+    features: String
+}
