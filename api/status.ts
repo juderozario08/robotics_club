@@ -9,6 +9,7 @@ export const STATUS_MESSAGES = {
     already_logged_in: "User already logged in",
     invalid_login: "Invalid login attempt!",
     invalid_signup: "Please fill out all the all the information properly!",
+    invalid_data: "Invalid Data!",
     not_authenticated: "User not authenticated!"
 }
 
