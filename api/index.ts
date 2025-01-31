@@ -3,6 +3,7 @@ import { router as userRouter } from "./routes/user.route";
 import mongoose from "mongoose";
 import 'dotenv/config'
 import { router as userAuthentication } from "./routes/userAuthentication.route";
+import { router as sessionRouter } from "./routes/session.route";
 
 const app = express();
 const port = 8080;
@@ -10,6 +11,7 @@ const port = 8080;
 app.use(express.json());
 app.use("/authed/users", userRouter);
 app.use("/users", userAuthentication);
+app.use("/testing/sessions", sessionRouter)
 
 app.listen(port, () => {
     if (process.env.DB_DEV_URI) {

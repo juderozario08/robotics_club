@@ -1,4 +1,4 @@
-import { Roles } from "../model/model"
+import { Roles } from "../shared/model"
 
 export function validateUsername(username: string): boolean { return username.length >= 6 }
 
@@ -50,7 +50,7 @@ export function validateEmail(email: String): boolean {
     return seenAt && seenWordsAfterAt && seenDotAfterAt && seenLettersAfterDot;
 }
 
-export function validateRole(role: number): boolean { return role >= 0 && role < Roles.__LENGTH }
+export function validateRole(role: number): boolean { return role >= 0 && role < Roles.LENGTH }
 
 export function validateFeatures(features: string): boolean { return !!features.match(/^[0-1]+$/); }
 

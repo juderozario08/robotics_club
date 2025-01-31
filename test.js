@@ -1,33 +1,120 @@
+import { Roles } from "./shared/model.ts";
 
-/**
- * @param {string} password
- * @return boolean
- * */
-function validatePassword(password) {
-    let seenUppercase = false;
-    let seenLowercase = false;
-    let seenNumbers = false;
-    let seenSymbols = false;
-    if (password.length < 8) {
+let user;
+let users;
+let userId;
+let deviceId;
+
+const link = "http://localhost:8080";
+
+async function testSignup(data) {
+    try {
+        const response = await fetch(`${link}/users/signup`, data);
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data, "\n");
+            return true;
+        }
+        return false;
+    } catch (err) {
         return false;
     }
-    for (let i = 0; i < password.length; i++) {
-        if (password[i].match(/[A-Z]/)) {
-            seenUppercase = true;
-        } else if (password[i].match(/[a-z]/)) {
-            seenLowercase = true;
-        } else if (password[i].match(/[0-9]/)) {
-            seenNumbers = true;
-        } else if (password[i].match(/[?$!@.%&]/)) {
-            seenSymbols = true;
-        }
-    }
-    return seenUppercase && seenLowercase && seenNumbers && seenSymbols;
 }
 
-console.log(
-    validatePassword("Sara14347272!$"),
-    validatePassword("aowbr bu"),
-    validatePassword("Crjj142117!4"),
-    validatePassword("!4_(@)"),
-)
+async function testLogin() {
+    const response = await fetch(`${link}/users/login`);
+    if (response.ok) {
+        const data = await response.json();
+        console.log(data, "\n");
+    }
+}
+
+async function testLogout() {
+}
+
+async function testGetAll() {
+}
+
+async function testGet() {
+}
+
+async function testPut() {
+}
+
+async function testDel() {
+}
+
+async function getAllSession() {
+}
+
+async function signupTesting() {
+    const failMessage = (i, got, expected) => {
+        const message = `USER${i + 1} SIGNUP TEST: FAILED! Expected ${expected} got ${got}`
+        console.log(message)
+        throw new Error(message)
+    }
+    const successMessage = (i) => {
+        console.log(`USER${i + 1} SIGNUP TEST: FAILED!`);
+    }
+    const tests = [
+        {
+            expected: true,
+            data: { method: "POST", username: "rozarij", firstname: "Jude", lastname: "Rozario", email: "test@mail.com", password: "Caosfib12512!$", role: Roles.admin }
+        },
+        {
+            expected: true,
+            data: { method: "POST", username: "jarozari", firstname: "Jude", lastname: "Rozario", email: "test2@mail.com", password: "Caosfib12512!$", role: Roles.admin }
+        },
+        {
+            expected: false,
+            data: { method: "POST", username: "jarozari", firstname: "Jude", lastname: "Rozario", email: "test3@mail.com", password: "Caosfib12512!$", role: Roles.admin }
+        },
+        {
+            expected: false,
+            data: { method: "POST", username: "alkgaslkjf", firstname: "Jude", lastname: "Rozario", email: "test2@mail.com", password: "Caosfib12512!$", role: Roles.admin }
+        },
+        {
+            expected: false,
+            data: { method: "POST", username: "abcde", firstname: "Jude", lastname: "Rozario", email: "test5@mail.com", password: "Caosfib12512!$", role: Roles.admin }
+        },
+        {
+            expected: false,
+            data: { method: "POST", username: "alkgaslkjf", firstname: "J", lastname: "Rozario", email: "test6@mail.com", password: "Caosfib12512!$", role: Roles.admin }
+        },
+        {
+            expected: false,
+            data: { method: "POST", username: "alkgaslkjf", firstname: "Jude", lastname: "R", email: "test7@mail.com", password: "Caosfib12512!$", role: Roles.admin }
+        },
+        {
+            expected: false,
+            data: { method: "POST", username: "alkgaslkjf", firstname: "Jude", lastname: "R", email: "test@.com", password: "Caosfib12512!$", role: Roles.admin }
+        },
+        {
+            expected: false,
+            data: { method: "POST", username: "alkgaslkjf", firstname: "Jude", lastname: "Rasogk", email: "test9@mail.com", password: "aojb12", role: Roles.admin }
+        },
+        {
+            expected: false,
+            data: { method: "POST", username: "alkgaslkjf", firstname: "Jude", lastname: "Raosgh", email: "test10@mail.com", password: "AOjb12asokgb213!$", role: Roles.LENGTH }
+        },
+    ]
+    for (let i = 0; i < tests.length; i++) {
+        const result = await testSignup(tests[i].data)
+        if (tests[i].expected !== result) {
+            failMessage(i, result, tests[i].expected);
+        } else {
+            successMessage(i)
+        }
+    }
+}
+
+async function main() {
+    try {
+        await signupTesting();
+    } catch (err) {
+        console.log("Test failed: ", err)
+    }
+    await testLogin()
+}
+
+main()

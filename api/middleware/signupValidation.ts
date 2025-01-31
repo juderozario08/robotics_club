@@ -7,6 +7,7 @@ import { User } from "../schemas/user.schema";
 export default async function signupValidation(req: Request, res: Response, next: NextFunction) {
     try {
         const { username, password, email, role, features, firstname, lastname } = req.body;
+
         // Validating all data fields
         if (!validateUsername(username)
             || !validatePassword(password)
