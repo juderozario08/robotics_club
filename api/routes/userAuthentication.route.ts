@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.post("/login", async (req, res) => {
     try {
-        const { username, password, deviceId } = req.body;
+        const { username, password } = req.body;
         if (!username || !password) {
             logError(
                 res,
@@ -50,14 +50,13 @@ router.post("/login", async (req, res) => {
                 res,
                 STATUS_MESSAGES.already_logged_in,
                 STATUS_CODES.unauthorized,
-                "Login Error: User already logged in on another device"
+                "Login Error: User already logged in!"
             )
             return
         }
 
         const sessionData = {
             userId: user._id,
-            deviceId,
             username
         }
         await Session.create(sessionData)
@@ -107,8 +106,8 @@ router.post("/signup", signupValidation, async (req, res) => {
 
 router.post("/logout", async (req, res) => {
     try {
-        const { userId, deviceId } = req.body;
-        if (!userId || !deviceId) {
+        const { userId } = req.body;
+        if (!userId) {
             logError(
                 res,
                 STATUS_MESSAGES.not_found,
@@ -117,7 +116,7 @@ router.post("/logout", async (req, res) => {
             );
             return
         }
-        const session = await Session.findOneAndDelete({ userId, deviceId })
+        const session = await Session.findOneAndDelete({ userId })
         if (!session) {
             logError(
                 res,

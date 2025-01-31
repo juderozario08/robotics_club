@@ -5,23 +5,23 @@ import type { NextFunction, Request, Response } from "express";
 
 export default async function authenticateSession(req: Request, res: Response, next: NextFunction) {
     try {
-        const { userId, deviceId } = req.params;
-        if (!userId || !deviceId) {
+        const { userId } = req.params;
+        if (!userId) {
             logError(
                 res,
                 STATUS_MESSAGES.not_found,
                 STATUS_CODES.not_found,
-                `Authentication Failed: userId or deviceId not provided! ${{ userId, deviceId }}`
+                `Authentication Failed: userId not provided! ${{ userId }}`
             );
             return
         }
-        const sessionExists = await Session.findOne({ userId, deviceId });
+        const sessionExists = await Session.findOne({ userId });
         if (!sessionExists) {
             logError(
                 res,
                 STATUS_MESSAGES.not_authenticated,
                 STATUS_CODES.unauthorized,
-                `Authentication Failed: User not logged in. ${{ userId, deviceId }}`
+                `Authentication Failed: User not logged in. ${{ userId }}`
             );
             return
         }

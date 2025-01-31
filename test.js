@@ -3,7 +3,6 @@ import { Roles } from "./shared/model.ts";
 let user;
 let users;
 let userId;
-let deviceId;
 
 const link = "http://localhost:8080";
 
@@ -21,15 +20,32 @@ async function testSignup(data) {
     }
 }
 
-async function testLogin() {
-    const response = await fetch(`${link}/users/login`);
-    if (response.ok) {
-        const data = await response.json();
-        console.log(data, "\n");
+async function testLogin(data) {
+    try {
+        const response = await fetch(`${link}/users/login`, data);
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data, "\n");
+            return true;
+        }
+        return false;
+    } catch (err) {
+        return false;
     }
 }
 
 async function testLogout() {
+    try {
+        const response = await fetch(`${link}/users/logout`, data);
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data, "\n");
+            return true;
+        }
+        return false;
+    } catch (err) {
+        return false;
+    }
 }
 
 async function testGetAll() {

@@ -7,7 +7,7 @@ import { logError, logSuccess } from "../utils/logging";
 const router = express.Router();
 
 /* GET ALL USERS ROUTER */
-router.get("/:userId/:deviceId", authenticateSession, async (_, res) => {
+router.get("/:userId", authenticateSession, async (_, res) => {
     try {
         const users = await User.find({});
         logSuccess(
@@ -28,7 +28,7 @@ router.get("/:userId/:deviceId", authenticateSession, async (_, res) => {
 });
 
 /* GET SPECIFIC USER ROUTER */
-router.get("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
+router.get("/:id/:userId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) {
@@ -69,7 +69,7 @@ router.get("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
 });
 
 /* PUT ROUTER */
-router.put("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
+router.put("/:id/:userId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) {
@@ -110,7 +110,7 @@ router.put("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
 })
 
 /* DELETE ROUTER */
-router.delete("/:id/:userId/:deviceId", authenticateSession, async (req, res) => {
+router.delete("/:id/:userId", authenticateSession, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) {
