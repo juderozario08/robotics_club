@@ -1,6 +1,6 @@
 import { Roles } from "../shared/model"
 
-export function validateUsername(username: string): boolean { return username.length >= 6 }
+export function validateUsername(username: string): boolean { return (!!username && username.length >= 6) }
 
 export function validatePassword(password: string): boolean {
     let seenUppercase = false;

@@ -20,14 +20,14 @@ export default async function signupValidation(req: Request, res: Response, next
                 res,
                 STATUS_MESSAGES.invalid_signup,
                 STATUS_CODES.not_acceptable,
-                `Signup Failed: Invalid signup data. ${req.body}`
+                `Signup Failed: Invalid signup data. ${JSON.stringify(req.body)}`
             )
             return
         }
 
         // Checking for existing username
-        const usernameUser = await User.find({ username })
-        if (usernameUser) {
+        const usernameUser = await User.findOne({ username })
+        if (!!usernameUser) {
             logError(
                 res,
                 STATUS_MESSAGES.existing_username,
@@ -38,8 +38,8 @@ export default async function signupValidation(req: Request, res: Response, next
         }
 
         // Checking for existing email
-        const emailUser = await User.find({ email })
-        if (emailUser) {
+        const emailUser = await User.findOne({ email })
+        if (!!emailUser) {
             logError(
                 res,
                 STATUS_MESSAGES.existing_email,
